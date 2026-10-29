@@ -1,0 +1,38 @@
+name: Repair school login
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - login-repair.js
+      - .github/workflows/repair-login.yml
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Attach login repair to existing full site
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+          tag='<script src="login-repair.js"></script>'
+          if tag not in s:
+              assert '</body>' in s.lower(), 'Missing body tag'
+              import re
+              s=re.sub(r'</body>',tag+'</body>',s,count=1,flags=re.I)
+              p.write_text(s,encoding='utf-8')
+          PY
+      - name: Commit corrected site
+        run: |
+          if ! git diff --quiet -- index.html; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add index.html
+            git commit -m "Load login repair on complete school website"
+            git push
+          fi
