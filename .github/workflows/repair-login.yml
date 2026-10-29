@@ -21,7 +21,8 @@ jobs:
           from pathlib import Path
           p=Path('index.html')
           s=p.read_text(encoding='utf-8')
-          tag='<script src="login-fix-v2.js"></script>'
+          tag='<script src="login-repair.js"></script>'
+          s=s.replace('<script src="login-fix-v2.js"></script>', '')
           if tag not in s:
               assert '</body>' in s.lower(), 'Missing body tag'
               import re
