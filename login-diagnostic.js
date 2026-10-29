@@ -1,0 +1,1 @@
+document.addEventListener('DOMContentLoaded',()=>{const el=document.getElementById('auth-status');if(el){el.textContent='Diagnóstico de acceso cargado';el.style.display='block';}});
